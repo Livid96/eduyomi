@@ -65,19 +65,23 @@
 
   // ── Router push helpers (called by router-patch.js) ──────────────────────────
   window.routerPushHome = function () {
+    if (!window._appReady) return;
     history.replaceState(null, '', BASE + '/');
     document.title = 'Eduyomi';
   };
   window.routerPushSubject = function (year, subjectName) {
+    if (!window._appReady) return;
     var url = subjectName
       ? buildDeepLink(year, subjectName)
       : BASE + '/' + (window._routerSlugify ? window._routerSlugify(String(year)) : String(year));
     history.replaceState(null, '', url);
   };
   window.routerPushChapter = function (year, subjectName, chapterName) {
+    if (!window._appReady) return;
     history.replaceState(null, '', buildDeepLink(year, subjectName, chapterName));
   };
   window.routerPushTopic = function (year, subjectName, chapterName, topicTitle) {
+    if (!window._appReady) return;
     history.replaceState(null, '', buildDeepLink(year, subjectName, chapterName, topicTitle));
   };
 

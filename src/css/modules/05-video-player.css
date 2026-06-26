@@ -200,6 +200,9 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
     }
+    #youtube-engine > div {
+      width: 100% !important; height: 100% !important;
+    }
     #youtube-engine iframe {
       width: 100% !important; height: 100% !important;
       border: none; display: block;

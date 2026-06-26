@@ -23,17 +23,12 @@ function onYouTubeIframeAPIReady() {
     playerVars: {
       autoplay: 0, controls: 0, rel: 0, modestbranding: 1,
       disablekb: 1, playsinline: 1, iv_load_policy: 3, fs: 0,
-      origin: location.origin || '*',
+      origin: window.location.origin,
       // Ad suppression params
       cc_load_policy: 0, hl: 'en', enablejsapi: 1,
     },
     events: { onStateChange: onStateChange, onReady: onPlayerReady }
   });
-  // YT API sets inline width/height in px — remove them so CSS takes over
-  setTimeout(() => {
-    const iframe = document.querySelector('#youtube-engine iframe');
-    if (iframe) { iframe.style.width = '100%'; iframe.style.height = '100%'; }
-  }, 500);
 }
 
 function onPlayerReady() {
