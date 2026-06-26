@@ -135,20 +135,24 @@
     if (route.chapter) {
       requestAnimationFrame(function () {
         var chSlug = slugify(route.chapter);
-        document.querySelectorAll('.chapter-header').forEach(function (el) {
-          if (slugify(el.dataset.chapter || el.textContent) === chSlug) {
+        document.querySelectorAll('.chapter-header-row').forEach(function (el) {
+          var titleEl = el.querySelector('.chapter-title-en');
+          var chText  = titleEl ? titleEl.textContent.replace(/^\d+\.\s*/, '').trim() : el.textContent.trim();
+          if (slugify(chText) === chSlug) {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            if (el.classList.contains('collapsed')) el.click();
+            var list = el.nextElementSibling;
+            if (list && !list.classList.contains('open')) el.click();
           }
         });
 
         if (route.topic) {
           var topSlug = slugify(route.topic);
           document.querySelectorAll('.topic-item').forEach(function (el) {
-            if (slugify(el.dataset.title || '') === topSlug) {
+            var nameEl = el.querySelector('.topic-en');
+            var topText = nameEl ? nameEl.textContent.trim() : '';
+            if (slugify(topText) === topSlug) {
               el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              var btn = el.querySelector('.play-btn, .topic-play');
-              if (btn) btn.click();
+              if (el.onclick) el.click();
             }
           });
         }

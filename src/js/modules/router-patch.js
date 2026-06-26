@@ -75,30 +75,37 @@
     var csd = window.currentSubjectData;
     if (!csd) return;
     var year = yearOf(csd.yi), subj = subjectOf(csd.yi, csd.si);
-    var ch   = headerEl && (headerEl.dataset.chapter || headerEl.textContent.trim());
+    // The header element is .chapter-header-row; chapter name is in .chapter-title-en
+    var titleEl = headerEl && headerEl.querySelector('.chapter-title-en');
+    var ch = titleEl ? titleEl.textContent.replace(/^\d+\.\s*/, '').trim() : null;
+    if (!ch && headerEl) ch = headerEl.textContent.trim();
     if (year && subj && ch && window.routerPushChapter) {
       routerPushChapter(year, subj, ch);
     }
   };
 
-  // ── Wrap video play — update URL with topic slug ───────────────
-  // Intercept clicks on .topic-item play buttons to push topic URL
-  document.addEventListener('click', function (e) {
-    var topicEl = e.target.closest && e.target.closest('.topic-item');
-    var isPlay  = e.target.closest && (e.target.closest('.play-btn, .topic-play, .topic-title'));
-    if (!topicEl || !isPlay) return;
+  // ── Wrap playTopic — update URL when a topic video is played ──
+  var _origPlayTopic = window.playTopic;
+  window.playTopic = function (videoId, title) {
+    _origPlayTopic && _origPlayTopic.apply(this, arguments);
     var csd = window.currentSubjectData;
     if (!csd) return;
     var year    = yearOf(csd.yi);
     var subject = subjectOf(csd.yi, csd.si);
-    var chapter = topicEl.closest('.chapter-block');
-    var chName  = chapter ? (chapter.querySelector('.chapter-header')?.dataset.chapter ||
-                             chapter.querySelector('.chapter-header')?.textContent.trim()) : null;
-    var topic   = topicEl.dataset.title || topicEl.querySelector('.topic-name')?.textContent.trim();
-    if (year && subject && chName && topic && window.routerPushTopic) {
-      routerPushTopic(year, subject, chName, topic);
-      if (window.routerSetTitle) routerSetTitle([year, subject, topic]);
+    // Find the currently open/active chapter name from the DOM
+    var chName = null;
+    var topicEl = document.getElementById('topic-' + videoId);
+    if (topicEl) {
+      var block = topicEl.closest('.chapter-block');
+      if (block) {
+        var titleEl = block.querySelector('.chapter-title-en');
+        chName = titleEl ? titleEl.textContent.replace(/^\d+\.\s*/, '').trim() : null;
+      }
     }
-  }, true); // capture phase so it runs before the play handler
+    if (year && subject && chName && title && window.routerPushTopic) {
+      routerPushTopic(year, subject, chName, title);
+      if (window.routerSetTitle) routerSetTitle([year, subject, title]);
+    }
+  };
 
 })();
